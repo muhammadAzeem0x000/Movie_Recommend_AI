@@ -1,11 +1,9 @@
-# WRITE YOUR CODE HERE
-import os
 import openai
-import secret
+import ast
 
-openai.api_key=secret.api_key
+openai.api_key="your_api_key"
+
 # functions
-
 def InBox(sample):
   #this gives you the longest string
   biggest = max(sample, key = len)
@@ -16,6 +14,7 @@ def InBox(sample):
     print("| " + i + (" "*(biggest-len(i))) + " |")
   print("+" + "-" * (biggest + 2) + "+")
 
+# Function of getting information about the prompt
 def Moreflix():
   # ask the user for different inputs
   print("Enter 0, if you don't have an answer in mind")
@@ -33,6 +32,7 @@ def Moreflix():
     return ("In a python array form, give me "+genre + " "+ str(number_recs) +" movie recommendations")
   return ("In a python array form, give me "+genre +" "+str(number_recs)+" movie recommendation similar to " + similar)
 
+# Function for API call
 def Res(x):
   response = openai.Completion.create(
     model="text-davinci-002",
@@ -42,12 +42,18 @@ def Res(x):
   return(response['choices'][0]['text'].strip())
 
 
-# WRITE YOUR CODE HERE
+# Driver Code
 Prompts=Moreflix() + "rec ="
-results = Res(Prompts)
-
-# Split the result into individual movie recommendations
-recommendations = results.split("[")
-
-# Display the formatted output
-InBox(recommendations)
+movies = (Res(Prompts))
+try:
+  movie_list = ast.literal_eval(movies)
+except:
+  movie_list2 = ""
+  for i in movies:
+    if i=="]":
+      movie_list2+=(i)
+      break
+    else:
+      movie_list2+=(i)
+  movie_list = ast.literal_eval(movie_list2)
+InBox(movie_list)
